@@ -25,7 +25,7 @@ You will be provided with an Angular application that includes intentional error
 **Instructions:**
 
 1. Clone the provided repository.
-2. Create a branch with your the following the pattern `code-review/your-name`
+2. Create a branch with the following the pattern `code-review/your-name`
 3. Identify and fix errors in the application code, including components, actions, reducers, effects, and unit tests.
 4. Ensure that the application adheres to SOLID principles.
 5. Write additional unit tests for the fixed components.
