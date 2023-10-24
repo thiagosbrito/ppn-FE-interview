@@ -1,48 +1,33 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Settings } from '../interfaces/settings';
+import { combineLatest, Observable, startWith } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { SettingsApi } from "../api/settings.api";
+import { LanguageApi } from "../api/language.api";
+import { SettingsResponse } from "../interfaces/settings-response";
+import { LanguageResponse } from "../interfaces/language-response";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
-  public readonly USER_SETTINGS_API: string = 'settings_url';
-  public readonly USER_LANGUAGE_API: string = 'language_url';
-  public user_settings: Settings;
 
   constructor(
-    private http_client: HttpClient
+    private settingsApi: SettingsApi,
+    private languageApi: LanguageApi,
   ) {
-
-    this.user_settings = {
-      theme: 'default',
-      language: 'EN'
-    };
   }
 
-  getSettings() {
-    return this.http_client.get(this.USER_SETTINGS_API)
-      .subscribe({
-        next: (settings: any) => {
-          if (settings && settings.theme) {
-            this.user_settings.theme = settings.theme;
-          }
-
-          return this.http_client.get(this.USER_LANGUAGE_API)
-            .subscribe({
-              next: (language: any) => {
-                if (language && language.lang_code) {
-                  this.user_settings.language = language.lang_code;
-                }
-              },
-              error: () => {
-                console.error('Error occurred when loading user language.')
-              }
-            })
-        },
-        error: () => {
-          console.error('Error occurred when loading user settings.')
-        }
-      });
+  loadSettings(): Observable<Settings> {
+    return combineLatest({
+      theme: this.settingsApi.getSettings().pipe(
+        startWith({} as SettingsResponse),
+        map((settings: SettingsResponse) => settings?.theme),
+      ),
+      language: this.languageApi.getLanguage().pipe(
+        startWith({} as LanguageResponse),
+        map((language: LanguageResponse) => language?.lang_code),
+      ),
+    });
   }
 }

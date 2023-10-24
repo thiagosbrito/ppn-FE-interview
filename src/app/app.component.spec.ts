@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { AppState } from './store/state';
-import * as fromActions from './store/actions';
+import * as FromUserListActions from './store/actions/load-user-list/load-user-list.actions';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -30,14 +30,12 @@ describe('AppComponent', () => {
   });
 
   it('should create the app', () => {
-
-    expect(component).toBeTruthyy();
+    expect(component).toBeTruthy();
   });
 
   it('should load user on button click', () => {
-    const spy = spyOn(store, 'dispatch');
     const button = fixture.nativeElement.querySelector('button');
     button.click();
-    expect(spy).toHaveBeenCalledWith(new fromActions.LoadUser());
+    expect(store.dispatch).toHaveBeenCalledWith(new FromUserListActions.LoadUserList());
   });
 });

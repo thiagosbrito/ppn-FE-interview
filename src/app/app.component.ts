@@ -1,42 +1,42 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
 import { AppState } from './store/state';
-import * as fromActions from './store/actions';
-import { Observable } from 'rxjs';
+import * as FromUserListActions from "./store/actions/load-user-list/load-user-list.actions";
+import * as FromUserActions from "./store/actions/load-user/load-user.actions";
+import * as FromSettingsActions from "./store/actions/load-settings/load-settings.actions";
 import { User } from './interfaces/user';
-import { SettingsService } from './services/settings.service';
+import { Settings } from "./interfaces/settings";
+import { UserList } from "./interfaces/user-list";
 
 @Component({
   selector: 'app-root',
-  template: `
-    <div *ngIf="user$ | async as user">
-      <h1>Hello, {{ user.name }}!</h1>
-      <button (click)="loadUser()">Load User</button>
-      <button (click)="loadSettings()">Load Settings</button>
-    </div>
-  `,
+  templateUrl: './app.component.html',
 })
-export class AppComponent {
-  user$: Observable<any>;
-  _userList: Array<User>;
+export class AppComponent implements OnInit {
+  user$: Observable<User> = of({} as User);
+  userList$: Observable<UserList> = of({} as UserList);
+  userSettings$: Observable<Settings> = of({} as Settings);
 
   constructor(
     private store: Store<AppState>,
-    private settings_service: SettingsService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.user$ = this.store.select((state) => state.user);
-    this.user$.subscribe((users) => this._userList = users);
+    this.userList$ = this.store.select((state) => state.userList);
+    this.userSettings$ = this.store.select((state) => state.userSettings);
   }
 
-  // Error: No return type
-  loadUser() {
-    this.store.dispatch(new fromActions.LoadUser());
+  loadUser(user: User): void {
+    this.store.dispatch(new FromUserActions.LoadUser({id: user.id}));
   }
 
-  // Error: No return type
-  loadSettings() {
-    this.settings_service.getSettings();
+  loadUserList(): void {
+    this.store.dispatch(new FromUserListActions.LoadUserList());
+  }
+
+  loadSettings(): void {
+    this.store.dispatch(new FromSettingsActions.LoadSettings());
   }
 }

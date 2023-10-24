@@ -1,4 +1,4 @@
 export interface Settings {
-    theme: string;
-    language: string;
+  theme: string;
+  language: string;
 }
